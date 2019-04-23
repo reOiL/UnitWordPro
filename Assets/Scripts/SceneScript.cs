@@ -10,13 +10,17 @@ public class SceneScript : MonoBehaviour {
 	// Use this for initialization
 	[FormerlySerializedAs("Quest Text")] public Text questText;
 	[FormerlySerializedAs("Word Template")] public Transform wordTemplate;
-	[FormerlySerializedAs("Main Camera")] public Camera mainCamera;
+	[FormerlySerializedAs("Input Word Box")] public Transform inputWordBox;
 	[SerializeField] private float _moveSpeed = 10.0f;
+	
 	private Transform _wordTemplatePool;
+	private Transform _inputWordBoxPool;
 	private Dictionary<int, Vector3> _dictSourcesWordPosition  = new Dictionary<int, Vector3>();
 	private void Start ()
 	{
 		var spriteResources = Resources.LoadAll<Sprite>("Word");
+		questText.text = "Ответ Привет";
+		BuildWordInputBox("ПРИВЕТ");
 		for (var i = 0; i < 33; i++)
 		{
 			var vecPos = new Vector3(-2.0f, -1.7f, 0.0f); //  + 0.65f * i
@@ -52,10 +56,24 @@ public class SceneScript : MonoBehaviour {
 			_dictSourcesWordPosition.Add(i, vecPos);
 		}
 	}
-	
+
+	private void BuildWordInputBox(string word)
+	{
+		for (var i = 0; i < word.Length; i++)
+		{
+			_inputWordBoxPool = Instantiate(inputWordBox);
+			var charCode = Convert.ToInt32(word[i]) - 1040;
+			if (charCode > 5)
+			{
+				charCode += 1;
+			}
+			_inputWordBoxPool.name = "WordBox_" + charCode;
+			_inputWordBoxPool.position = new Vector3(-2.2f + 0.63f * i, -0.39f, 0);
+		}
+	}
 	// Update is called once per frame
 	private Transform _transformNowMove;
-	private int GetWordNumberByName(string name)
+	public static int GetWordNumberByName(string name)
 	{
 		var iWordPos = name.IndexOf("_", StringComparison.Ordinal);
 		if (iWordPos == -1)
@@ -97,7 +115,7 @@ public class SceneScript : MonoBehaviour {
 
 			if (hit.transform == null) return;
 			if (!hit.transform.CompareTag("Word")) return;
-
+			
 			_transformNowMove = hit.transform;
 		}
 		else
