@@ -98,14 +98,14 @@ public class SceneScript : MonoBehaviour {
 	{
 		if (Input.touchCount == 0)
 		{
-			TakeObject();
+			DropObject();
 		}
 
 		if (Input.touchCount == 0) return;
 		
 		if (_transformNowMove == null)
 		{
-			DropObject();
+			TakeObject();
 		}
 		else
 		{
@@ -113,7 +113,7 @@ public class SceneScript : MonoBehaviour {
 		}
 	}
 
-	private void TakeObject()
+	private void DropObject()
 	{
 		if (_transformNowMove == null) return;
 		
@@ -130,7 +130,7 @@ public class SceneScript : MonoBehaviour {
 		_transformNowMove = null;
 	}
 
-	private void DropObject()
+	private void TakeObject()
 	{
 		if (Camera.main == null) return;
 		var mousePos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
