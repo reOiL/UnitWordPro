@@ -19,9 +19,8 @@ public class SceneScript : MonoBehaviour {
 	private void Start ()
 	{
 		DataManager.LoadAll();
+		SetLevel(0);
 		var spriteResources = Resources.LoadAll<Sprite>("Word");
-		questText.text = DataManager.ContTaskData[0].Quest;
-		BuildWordInputBox(DataManager.ContTaskData[0].Answer.ToUpper());
 		for (var i = 0; i < 33; i++)
 		{
 			var vecPos = new Vector3(-2.0f, -1.7f, 0.0f); //  + 0.65f * i
@@ -58,6 +57,15 @@ public class SceneScript : MonoBehaviour {
 		}
 	}
 
+	private void SetLevel(int iLevelNo)
+	{
+		if (DataManager.ContTaskData.Count < iLevelNo + 1)
+		{
+			return;
+		}
+		questText.text = DataManager.ContTaskData[iLevelNo].Quest;
+		BuildWordInputBox(DataManager.ContTaskData[iLevelNo].Answer.ToUpper());
+	}
 	private void BuildWordInputBox(string word)
 	{
 		for (var i = 0; i < word.Length; i++)
@@ -90,44 +98,58 @@ public class SceneScript : MonoBehaviour {
 	{
 		if (Input.touchCount == 0)
 		{
-			if (_transformNowMove != null)
-			{
-				var wordId = GetWordNumberByName(_transformNowMove.name);
-				if (wordId == -1)
-				{
-					goto EXIT;
-				}
-				_transformNowMove.position = Vector3.MoveTowards(
-					_transformNowMove.position,
-					_dictSourcesWordPosition[wordId],
-					_moveSpeed);
-				EXIT:
-				_transformNowMove = null;
-			}
+			TakeObject();
 		}
 
 		if (Input.touchCount == 0) return;
 		
 		if (_transformNowMove == null)
 		{
-			if (Camera.main == null) return;
-			var mousePos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
-			var hit = Physics2D.Raycast(mousePos, Vector2.zero);
-
-			if (hit.transform == null) return;
-			if (!hit.transform.CompareTag("Word")) return;
-			
-			_transformNowMove = hit.transform;
+			DropObject();
 		}
 		else
 		{
-			if (Camera.main == null) return;
-			var vecNewPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
-			vecNewPos.z = -1;
-			_transformNowMove.transform.position = Vector3.MoveTowards(
-				_transformNowMove.transform.position,
-				vecNewPos,
-				_moveSpeed);
+			MoveObject();
 		}
+	}
+
+	private void TakeObject()
+	{
+		if (_transformNowMove == null) return;
+		
+		var wordId = GetWordNumberByName(_transformNowMove.name);
+		if (wordId == -1)
+		{
+			goto EXIT;
+		}
+		_transformNowMove.position = Vector3.MoveTowards(
+			_transformNowMove.position,
+			_dictSourcesWordPosition[wordId],
+			_moveSpeed);
+		EXIT:
+		_transformNowMove = null;
+	}
+
+	private void DropObject()
+	{
+		if (Camera.main == null) return;
+		var mousePos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+		var hit = Physics2D.Raycast(mousePos, Vector2.zero);
+
+		if (hit.transform == null) return;
+		if (!hit.transform.CompareTag("Word")) return;
+		
+		_transformNowMove = hit.transform;
+	}
+
+	private void MoveObject()
+	{
+		if (Camera.main == null) return;
+		var vecNewPos = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+		vecNewPos.z = -1;
+		_transformNowMove.transform.position = Vector3.MoveTowards(
+			_transformNowMove.transform.position,
+			vecNewPos,
+			_moveSpeed);
 	}
 }
