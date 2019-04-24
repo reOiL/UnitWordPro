@@ -19,7 +19,7 @@ public class SceneScript : MonoBehaviour {
 	private void Start ()
 	{
 		DataManager.LoadAll();
-		SetLevel(0);
+		SetLevel(DataManager.User.Level);
 		var spriteResources = Resources.LoadAll<Sprite>("Word");
 		for (var i = 0; i < 33; i++)
 		{

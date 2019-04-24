@@ -27,12 +27,14 @@ public class DataManager : MonoBehaviour {
 		}
 
 		LoadObject(out ContTaskData, "TaskData");
+		User.Load();
 		_isLoad = true;
 	}
 
 	private static void SaveAll()
 	{
 		//SaveObject(ContTaskData, "TaskData");
+		User.Save();
 	}
 	
 	private static void LoadObject<T>(out T kData, string xmlName)
@@ -74,6 +76,22 @@ public class DataManager : MonoBehaviour {
 
 	}
 
+	public class CUserData
+	{
+		public int Level = 0;
+
+		public void Save()
+		{
+			PlayerPrefs.SetInt("Level", Level);
+			PlayerPrefs.Save();
+		}
+
+		public void Load()
+		{
+			Level = PlayerPrefs.GetInt("Level");
+		}
+	}
 	public static List<CTaskData> ContTaskData = new List<CTaskData>();
+	public static CUserData User = new CUserData();
 	private static bool _isLoad;
 }
