@@ -18,9 +18,10 @@ public class SceneScript : MonoBehaviour {
 	private Dictionary<int, Vector3> _dictSourcesWordPosition  = new Dictionary<int, Vector3>();
 	private void Start ()
 	{
+		DataManager.LoadAll();
 		var spriteResources = Resources.LoadAll<Sprite>("Word");
-		questText.text = "Ответ Привет";
-		BuildWordInputBox("ПРИВЕТ");
+		questText.text = DataManager.ContTaskData[0].Quest;
+		BuildWordInputBox(DataManager.ContTaskData[0].Answer.ToUpper());
 		for (var i = 0; i < 33; i++)
 		{
 			var vecPos = new Vector3(-2.0f, -1.7f, 0.0f); //  + 0.65f * i
